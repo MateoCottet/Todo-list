@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TODO List</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<h1>TODO LIST</h1>
+<div class="card">
+<input type="text" id="todoInput" placeholder="Escribe tu tarea aquí">
+    <button onclick="addTodo()">Agregar</button>
+    <button onclick="showFastestTask()">Mostrar tarea más rápida</button>
+</div>
+<ul id="todoList"></ul>
+
+<script>
+let todos = [];
+
+function addTodo() {
+  const todoInput = document.getElementById('todoInput');
+  const task = todoInput.value.trim();
+  
+  if (task !== '') {
+    const timestamp = new Date().getTime();
+    todos.push({ task, timestamp, completed: false });
+    showTodos();
+    todoInput.value = '';
+  }
+}
+
+function showTodos() {
+  const todoList = document.getElementById('todoList');
+  todoList.innerHTML = '';
+
+  todos.forEach(todo => {
+    const li = document.createElement('li');
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.checked = todo.completed;
+    checkbox.addEventListener('change', () => {
+      todo.completed = checkbox.checked;
+      showTodos();
+    });
+
+    const text = document.createElement('span');
+    text.innerText = todo.task + ' - ' + new Date(todo.timestamp).toLocaleString();
+
+    if (todo.completed) {
+      text.style.textDecoration = 'line-through';
+      text.innerText += ' - ' + new Date().toLocaleString();
+    }
+
+    li.appendChild(checkbox);
+    li.appendChild(text);
+    todoList.appendChild(li);
+  });
+}
+
+function showFastestTask() {
+  const fastestTask = todos.filter(todo => todo.completed)
+                           .sort((a, b) => a.timestamp - b.timestamp)[0];
+
+  if (fastestTask) {
+    alert(`La tarea más rápida en realizarse fue: ${fastestTask.task}`);
+  } else {
+    alert('No hay tareas completadas aún');
+  }
+}
+</script>
+</body>
+</html>
